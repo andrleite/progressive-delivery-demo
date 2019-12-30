@@ -15,4 +15,4 @@ build:
   stage: build
   script:
     - docker build --build-arg COLOR=${CI_COMMIT_REF_NAME} -t ${IMAGE_PREFIX}rollouts-demo:${CI_COMMIT_REF_NAME} .
-    - docker push ${IMAGE_PREFIX}:rollouts-demo:${CI_COMMIT_REF_NAME}
+    - docker push ${IMAGE_PREFIX}rollouts-demo:${CI_COMMIT_REF_NAME}
