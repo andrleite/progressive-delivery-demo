@@ -45,7 +45,7 @@ deploy:
     - |
         ( cd ${TMP_DIR} && \
         kustomize edit set image quay.io/andrleite/rollouts-demo=quay.io/andrleite/rollouts-demo:${CI_COMMIT_REF_NAME} )
-    - kustomize build ${TMP_DIR} > manifests/progressive-delivery-demo.yaml
-    - git add manifests/canary-demo.yaml
+    - kustomize build ${TMP_DIR} > manifests/${CI_PROJECT_NAME}.yaml
+    - git add manifests/${CI_PROJECT_NAME}.yaml
     - git commit -m "(gitlab-ci) job id ${CI_JOB_ID} - update k8s resources"
     - git push origin master
