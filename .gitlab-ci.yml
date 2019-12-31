@@ -41,7 +41,7 @@ deploy:
     - cd ${TMP_DIR}
     - git clone git@github.com:andrleite/argo-apps.git
     - cd argo-apps/${CI_PROJECT_NAME}
-    - cp -a kustomize/ ${TMP_DIR}
+    - cp kustomize/* ${TMP_DIR}
     - |
         ( cd ${TMP_DIR} && \
         kustomize edit set image quay.io/andrleite/rollouts-demo=quay.io/andrleite/rollouts-demo:${CI_COMMIT_REF_NAME} )
