@@ -9,6 +9,7 @@ variables:
 
 stages:
   - build
+  - test
   - deploy
 
 before_script:
@@ -19,7 +20,13 @@ build:
   script:
     - docker build --build-arg COLOR=${CI_COMMIT_REF_NAME} -t ${IMAGE_PREFIX}rollouts-demo:${CI_COMMIT_REF_NAME} .
     - docker push ${IMAGE_PREFIX}rollouts-demo:${CI_COMMIT_REF_NAME}
-      
+
+unit:
+  stage: test
+  image: golang:1.13.5
+  script:
+    - go test ./...
+  
 deploy:
   stage: deploy
   before_script:
