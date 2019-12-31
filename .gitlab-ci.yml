@@ -42,8 +42,9 @@ deploy:
     - git clone git@github.com:andrleite/argo-apps.git
     - cd argo-apps/${CI_PROJECT_NAME}
     - cp -a kustomize/ ${TMP_DIR}
-    - ( cd ${TMP_DIR} && \
-      kustomize edit set image quay.io/andrleite/rollouts-demo=quay.io/andrleite/rollouts-demo:${CI_COMMIT_REF_NAME} )
+    - |
+        ( cd ${TMP_DIR} && \
+        kustomize edit set image quay.io/andrleite/rollouts-demo=quay.io/andrleite/rollouts-demo:${CI_COMMIT_REF_NAME} )
     - kustomize build ${TMP_DIR} > manifests/progressive-delivery-demo.yaml
     - git add manifests/canary-demo.yaml
     - git commit -m "(gitlab-ci) job id ${CI_JOB_ID} - update k8s resources"
