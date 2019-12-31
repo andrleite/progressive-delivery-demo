@@ -18,6 +18,7 @@ before_script:
   - mkdir -p ~/.ssh
   - chmod 700 ~/.ssh
   - apk add git
+  - apk add curl
   - git config --global user.email "${GITHUB_USER_EMAIL}"
   - git config --global user.name "${GITHUB_USER}"
   - mkdir -p ~/.ssh
