@@ -23,6 +23,8 @@ build:
 deploy:
   stage: deploy
   before_script:
+    - apk add git
+    - apk add curl
     - |
         curl -s -0 -L https://github.com/kubernetes-sigs/kustomize/releases/download/kustomize%2Fv3.5.3/kustomize_v3.5.3_linux_amd64.tar.gz  \
         | tar -C /usr/local/bin -xzf -
@@ -30,8 +32,6 @@ deploy:
     - echo "${GIT_SSH_PRIV_KEY}" | tr -d '\r' | ssh-add -
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
-    - apk add git
-    - apk add curl
     - git config --global user.email "${GITHUB_USER_EMAIL}"
     - git config --global user.name "${GITHUB_USER}"
   script:
