@@ -1,3 +1,3 @@
-module github.com/andrleite/progressive-delivery
+module github.com/argoproj/rollouts-demo
 
 go 1.12
