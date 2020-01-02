@@ -1,1 +1,0 @@
-# Progressive Delivery Demo Application

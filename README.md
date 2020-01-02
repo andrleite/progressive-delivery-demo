@@ -1,2 +1,2 @@
 # progressive-delivery-demo
-Demonstration of progressive delivery with argo, flagger and istio
+Demonstration of progressive delivery with kustomize, argo, flagger and istio
