@@ -8,26 +8,26 @@ variables:
   IMAGE_PREFIX: "quay.io/andrleite/"
 
 stages:
-  - build
   - test
-  - deploy
+  - release
+  - staging-deploy
   
-build:
-  stage: build
-  before_script:
-    - docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}
-  script:
-    - docker build --build-arg COLOR=${CI_COMMIT_REF_NAME} -t ${IMAGE_PREFIX}rollouts-demo:${CI_COMMIT_REF_NAME} .
-    - docker push ${IMAGE_PREFIX}rollouts-demo:${CI_COMMIT_REF_NAME}
-
 unit:
   stage: test
   image: golang:1.13.5
   script:
     - go test ./...
-  
-deploy:
-  stage: deploy
+
+docker-release:
+  stage: release
+  before_script:
+    - docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY}
+  script:
+    - docker build --build-arg COLOR=${CI_COMMIT_REF_NAME} -t ${IMAGE_PREFIX}rollouts-demo:${CI_COMMIT_REF_NAME} .
+    - docker push ${IMAGE_PREFIX}rollouts-demo:${CI_COMMIT_REF_NAME}
+ 
+canary-header:
+  stage: staging-deploy
   before_script:
     - apk add git
     - apk add curl
@@ -46,12 +46,13 @@ deploy:
     - TMP_DIR=$(mktemp -d)
     - cd ${TMP_DIR}
     - git clone git@github.com:andrleite/argo-apps.git
+    - cp -a argo-apps/${CI_PROJECT_NAME}/kustomize/* ${TMP_DIR}
+    - kustomize create --autodetect --resources canary-header/canary-header.yaml
+    - kustomize edit set image quay.io/andrleite/rollouts-demo=quay.io/andrleite/rollouts-demo:${CI_COMMIT_REF_NAME}
+    - kustomize build ${TMP_DIR} > argo-apps/${CI_PROJECT_NAME}/manifests/${CI_PROJECT_NAME}.yaml
     - cd argo-apps/${CI_PROJECT_NAME}
-    - cp kustomize/* ${TMP_DIR}
-    - |
-        ( cd ${TMP_DIR} && \
-        kustomize edit set image quay.io/andrleite/rollouts-demo=quay.io/andrleite/rollouts-demo:${CI_COMMIT_REF_NAME} )
-    - kustomize build ${TMP_DIR} > manifests/${CI_PROJECT_NAME}.yaml
     - git add manifests/${CI_PROJECT_NAME}.yaml
     - git commit -m "(gitlab-ci) job id ${CI_JOB_ID} - update k8s resources" || true
     - git push origin master
+  only:
+    - external_pull_requests
